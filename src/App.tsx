@@ -1,30 +1,50 @@
 import { useState } from 'react'
-import { DataGrid } from '@mui/x-data-grid';
-import { Accordion, AccordionDetails, AccordionSummary, Stack, TextField, Typography } from '@mui/material';
+import { CompositionEditor } from './features/totalling/ui/compositionEdior/CompositionEditor';
+import { ClassItem, PerformanceObject, SummaryComposition, SummaryItem } from './features/totalling/types';
+import { Button } from '@mui/material';
+import { SummaryView } from './features/totalling/ui/summaryView/SummaryView';
+import { useCalcBoard } from './features/totalling/hook/useTableBoard';
 
 function App() {
-  const [count, setCount] = useState(0)
 
-  return (
+    const [isOpenCompositionEditorKey, setShowCompositionEditorStateKey] = useState<string | undefined>(undefined);
+    
+    const calcBoard = useCalcBoard();
+
+    console.log(calcBoard);
+
+    // const testdata = 
+    
+    // const [plPeformanceObj, setPlPeformanceObj] = useState<PerformanceObject[]>([]);
+
+    const handleChangeComposition = (composition: SummaryComposition | undefined) => {
+
+        if (composition) {
+            calcBoard.setComposition({...composition});
+            calcBoard.saveLocalData();
+        }
+
+        setShowCompositionEditorStateKey(undefined);
+    }
+
+    const handleShowCompoisitionDialog = () => {
+        setShowCompositionEditorStateKey(crypto.randomUUID());
+    }
+
+    return (
     <>
-        <Stack>
-            <Stack gap={2} direction={'row'}>
-                <div>TS業務売上</div>
-                <div>￥1000000</div>
-                <div>￥1000000</div>
-                <div>￥1000000</div>
-                <div>￥1000000</div>
-                <div>￥1000000</div>
-                <div>￥1000000</div>
-                <div>￥1000000</div>
-                <div>￥1000000</div>
-                <div>￥1000000</div>
-                <div>￥1000000</div>
-            </Stack>
-        </Stack>
+        <Button onClick={handleShowCompoisitionDialog}>開く</Button>
+
+        <CompositionEditor 
+        key={isOpenCompositionEditorKey ?? crypto.randomUUID()}
+        isOpen={isOpenCompositionEditorKey != undefined} 
+        composition={calcBoard.composition} 
+        onCloseDialog={handleChangeComposition}/>
+
+        <SummaryView ></SummaryView>
 
     </>
-  )
+    )
 }
 
 export default App
